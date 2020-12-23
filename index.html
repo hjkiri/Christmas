@@ -1,0 +1,46 @@
+<!doctype HTML>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+<script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
+<script src="https://raw.githack.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.min.js"></script>
+<script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
+
+<body style='margin : 0px; overflow: hidden;'>
+    <!-- we add detectionMode and matrixCodeType to tell AR.js to recognize barcode markers -->
+    <a-scene embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
+
+        <a-assets>
+
+            <a-asset-item id="animated-asset" src="models/santa.glb"></a-asset-item>
+        </a-assets>
+        <a-assets>
+            <audio id="sound" src="bells.mp3" preload="auto"></audio>
+        </a-assets>
+        <a-marker id="animated-marker" type='barcode' value='6' soundhandler>
+            <a-entity animation-mixer
+                      gltf-model="#animated-asset"
+                      position="0 0 0"
+                      scale="0.035 0.035 0.035">
+            </a-entity>
+        </a-marker>
+        <a-entity sound="src: #sound" autoplay="false"></a-entity>
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+        AFRAME.registerComponent('soundhandler', {
+            tick: function () {
+                var entity = document.querySelector('[sound]');
+                if (document.querySelector('a-marker').object3D.visible == true) {
+                    entity.components.sound.playSound();
+                } else {
+                    entity.components.sound.pauseSound();
+                }
+
+            }
+        });
+    </script>
+</body>
+</html>
